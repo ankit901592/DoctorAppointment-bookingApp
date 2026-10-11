@@ -13,7 +13,6 @@ const port = process.env.PORT || 4000;
 App.use(express.json());
 App.use(cors());
 
-//api end point
 
 App.get("/", (req, res) => {
   res.send("app is working");

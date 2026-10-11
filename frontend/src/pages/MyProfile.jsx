@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const MyProfile = () => {
   const { userData, setUserData, token, backEndUrl, loadUserProfileData } =
     useContext(AppContext);
-  // console.log(userData);
 
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(false);
@@ -29,7 +28,7 @@ const MyProfile = () => {
           headers: {
             Authorization: `Bearer ${token}`, // Make sure token is valid and present
           },
-        }
+        },
       );
       if (data.success) {
         toast.success(data.message);
@@ -47,156 +46,268 @@ const MyProfile = () => {
 
   return (
     userData && (
-      <div className="max-w-lg flex flex-col gap-2 text-sm">
-        {isEdit ? (
-          <label htmlFor="image">
-            <div className="inline-block relative cursor-pointer">
-              <img
-                className="w-36 rounded opacity-75"
-                src={image ? URL.createObjectURL(image) : userData.image}
-                alt=""
-              />
-              <img
-                className="w-10 absolute bottom-12 right-12"
-                src={image ? "" : assets.upload_icon}
-                alt=""
-              />
-            </div>
-            <input
-              hidden
-              onChange={(e) => setImage(e.target.files[0])}
-              type="file"
-              id="image"
-            />
-          </label>
-        ) : (
-          <img
-            className="w-36 rounded "
-            src={userData.image}
-            alt="profile pic"
-          />
-        )}
+      <div className="max-w-2xl mx-auto pb-12 text-sm text-gray-700">
+        {/* Profile Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-8">
+          {isEdit ? (
+            <label htmlFor="image" className="shrink-0 cursor-pointer">
+              <div className="relative w-28 h-28 group">
+                <img
+                  className="w-full h-full object-cover rounded-2xl border border-gray-200"
+                  src={image ? URL.createObjectURL(image) : userData.image}
+                  alt="Profile"
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <img
+                    className="w-7 h-7"
+                    src={assets.upload_icon}
+                    alt="Upload"
+                  />
+                  <span className="text-white text-xs mt-1">Change Photo</span>
+                </div>
+              </div>
 
-        {isEdit ? (
-          <input
-            className="bg-gray-50 text-3xl font-medium max-w-60 mt-4 "
-            value={userData.name}
-            type="text"
-            onChange={(e) =>
-              setUserData((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-        ) : (
-          <p className="font-medium text-3xl text-neutral-800 mt-4 ">
-            {userData.name}
-          </p>
-        )}
-        <hr className="bg-zinc-400 h-[1px] border-none" />
-        <div>
-          <p className="text-neutral-500 underline mt-3 ">
-            CONTACT INFORMATION
-          </p>
-          <div className=" grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
-            <p className="font-medium">Emailid:</p>
-            <p className="text-blue-500">{userData.email}</p>
-            <p className="font-medium">Phone:</p>
+              <input
+                hidden
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files?.[0] || null)}
+                type="file"
+                id="image"
+              />
+            </label>
+          ) : (
+            <img
+              className="w-28 h-28 object-cover rounded-2xl border border-gray-200 shrink-0"
+              src={userData.image}
+              alt="Profile"
+            />
+          )}
+
+          <div className="flex-1 min-w-0">
             {isEdit ? (
               <input
-                className="bg-gray-100 max-w-52"
-                value={userData.phone}
+                className="w-full max-w-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-2xl font-semibold text-gray-800 outline-none focus:border-primary"
+                value={userData.name}
                 type="text"
+                placeholder="Enter your name"
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, phone: e.target.value }))
+                  setUserData((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
                 }
               />
             ) : (
-              <p className="text-blue-400">{userData.phone}</p>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 break-words">
+                {userData.name}
+              </h1>
             )}
-            <p className="font-medium">Address:</p>
-            {isEdit ? (
-              <p>
-                <input
-                  className="bg-gray-50"
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, line1: e.target.value },
-                    }))
-                  }
-                  value={userData.address.line1}
-                  type="text"
-                />
-                <br />
-                <input
-                  className="bg-gray-50"
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, line2: e.target.value },
-                    }))
-                  }
-                  value={userData.address.line2}
-                  type="text"
-                />
-              </p>
-            ) : (
-              <p className="text-gray-500">
-                {userData.address.line1}
-                <br />
-                {userData.address.line2}
-              </p>
+
+            <p className="text-gray-500 mt-2">
+              {isEdit
+                ? "Update your personal details below."
+                : "Manage your personal information"}
+            </p>
+
+            {!isEdit && (
+              <span className="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">
+                <span className="w-2 h-2 rounded-full bg-green-500" />
+                Patient Profile
+              </span>
             )}
           </div>
         </div>
 
-        <div>
-          <p className="text-neutral-500 underline mt-3">BASCIC INFORMATON</p>
-          <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3  text-neutral-700">
-            <p className="font-medium">Gender:</p>
+        {/* Contact Information */}
+        <section className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 mb-5 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary">
+              <span className="text-lg">@</span>
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-gray-800">
+                Contact Information
+              </h2>
+              <p className="text-xs text-gray-500 mt-1">
+                Your email, phone and address
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-x-5 gap-y-5">
+            <p className="font-medium text-gray-500 self-center">
+              Email Address
+            </p>
+            <p className="text-gray-700 break-all py-2">{userData.email}</p>
+
+            <p className="font-medium text-gray-500 self-center">
+              Phone Number
+            </p>
+            {isEdit ? (
+              <input
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-primary"
+                value={userData.phone || ""}
+                type="tel"
+                placeholder="Enter phone number"
+                onChange={(e) =>
+                  setUserData((prev) => ({
+                    ...prev,
+                    phone: e.target.value,
+                  }))
+                }
+              />
+            ) : (
+              <p className="py-2 text-gray-700">
+                {userData.phone || "Not provided"}
+              </p>
+            )}
+
+            <p className="font-medium text-gray-500 sm:self-start sm:pt-2">
+              Address
+            </p>
+
+            {isEdit ? (
+              <div className="flex flex-col gap-3">
+                <input
+                  className="w-full min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-primary"
+                  placeholder="Address line 1"
+                  value={userData.address?.line1 || ""}
+                  onChange={(e) =>
+                    setUserData((prev) => ({
+                      ...prev,
+                      address: {
+                        ...(prev.address || {}),
+                        line1: e.target.value,
+                      },
+                    }))
+                  }
+                />
+
+                <input
+                  className="w-full min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-primary"
+                  placeholder="Address line 2"
+                  value={userData.address?.line2 || ""}
+                  onChange={(e) =>
+                    setUserData((prev) => ({
+                      ...prev,
+                      address: {
+                        ...(prev.address || {}),
+                        line2: e.target.value,
+                      },
+                    }))
+                  }
+                />
+              </div>
+            ) : (
+              <p className="text-gray-700 leading-6 py-1 break-words">
+                {userData.address?.line1 || "Address not provided"}
+                {userData.address?.line2 && (
+                  <>
+                    <br />
+                    {userData.address.line2}
+                  </>
+                )}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Basic Information */}
+        <section className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+              <span className="text-lg">♙</span>
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-gray-800">
+                Basic Information
+              </h2>
+              <p className="text-xs text-gray-500 mt-1">
+                Your personal details
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-x-5 gap-y-5">
+            <p className="font-medium text-gray-500 self-center">Gender</p>
+
             {isEdit ? (
               <select
-                className="max-w-20 bg-gray-100"
+                className="w-full sm:max-w-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-primary"
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, gender: e.target.value }))
+                  setUserData((prev) => ({
+                    ...prev,
+                    gender: e.target.value,
+                  }))
                 }
-                value={userData.gender}
+                value={userData.gender || ""}
               >
+                <option value="" disabled>
+                  Select gender
+                </option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             ) : (
-              <p className="text-gray-400">{userData.gender}</p>
+              <p className="py-2 text-gray-700">
+                {userData.gender || "Not specified"}
+              </p>
             )}
-            <p className="font-medium">Birthday:</p>
+
+            <p className="font-medium text-gray-500 self-center">
+              Date of Birth
+            </p>
+
             {isEdit ? (
               <input
-                className="max-w-28 bg-gray-100 "
+                className="w-full sm:max-w-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-primary"
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, dob: e.target.value }))
+                  setUserData((prev) => ({
+                    ...prev,
+                    dob: e.target.value,
+                  }))
                 }
-                value={userData.dob}
+                value={userData.dob || ""}
                 type="date"
               />
             ) : (
-              <p className=" text-gray-400">{userData.dob}</p>
+              <p className="py-2 text-gray-700">
+                {userData.dob || "Not provided"}
+              </p>
             )}
           </div>
-        </div>
+        </section>
 
-        <div className="mt-10">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-3">
           {isEdit ? (
-            <button
-              className="border  border-primary px-8 py-2  rounded-full hover:bg-primary hover:text-white transition-all"
-              onClick={updateUserProfileData}
-            >
-              Save Infrormation
-            </button>
+            <>
+              <button
+                type="button"
+                className="bg-primary text-white px-8 py-3 rounded-full font-medium hover:opacity-90 active:scale-95 transition-all"
+                onClick={updateUserProfileData}
+              >
+                Save Information
+              </button>
+
+              <button
+                type="button"
+                className="border border-gray-300 text-gray-600 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition-all"
+                onClick={() => {
+                  setIsEdit(false);
+                  setImage(null);
+                }}
+              >
+                Cancel
+              </button>
+            </>
           ) : (
             <button
-              className="border  border-primary px-8 py-2  rounded-full hover:bg-primary hover:text-white transition-all"
+              type="button"
+              className="bg-primary text-white px-8 py-3 rounded-full font-medium hover:opacity-90 active:scale-95 transition-all"
               onClick={() => setIsEdit(true)}
             >
-              Edit Details
+              Edit Profile
             </button>
           )}
         </div>
